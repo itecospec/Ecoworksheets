@@ -2,7 +2,7 @@
   "name": "Ecospec Worksheet",
   "short_name": "Ecospec",
   "description": "Ecospec site daily worksheet and PDF report generator",
-  "start_url": "/",
+"start_url": "/Ecoworksheets/"
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f0f7f0",
