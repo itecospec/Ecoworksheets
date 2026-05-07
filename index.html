@@ -443,45 +443,25 @@ function renderGrid(){
   });
 }
 
-async function getLogoDataUrl(){
-  const img=document.getElementById('app_logo');
-  if(!img)return null;
-
-  return new Promise(resolve=>{
-    const image=new Image();
-    image.crossOrigin='anonymous';
-
-    image.onload=function(){
-      try{
-        const canvas=document.createElement('canvas');
-        canvas.width=image.naturalWidth;
-        canvas.height=image.naturalHeight;
-        const ctx=canvas.getContext('2d');
-        ctx.drawImage(image,0,0);
-        resolve(canvas.toDataURL('image/png'));
-      }catch(e){
-        resolve(null);
-      }
-    };
-
-    image.onerror=function(){resolve(null);};
-    image.src=img.src;
-  });
-}
-
 async function generatePDF(){
   if(!validate())return;
 
   const btn=document.querySelector('.submit-btn');
   const msg=document.getElementById('gen_msg');
-  btn.disabled=true;
-  btn.textContent='Generating...';
-  msg.style.display='block';
 
-  await new Promise(r=>setTimeout(r,50));
+  try{
+    btn.disabled=true;
+    btn.textContent='Generating...';
+    msg.style.display='block';
+    msg.textContent='Building PDF with photos, please wait...';
 
-  const logoDataUrl=await getLogoDataUrl();
-  const {jsPDF}=window.jspdf;
+    await new Promise(r=>setTimeout(r,50));
+
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      throw new Error('jsPDF has not loaded. Check your internet connection or CDN access.');
+    }
+
+    const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
 
   const PW=595;
@@ -515,9 +495,8 @@ async function generatePDF(){
     doc.setFillColor(...MIDGREEN);
     doc.rect(0,66,PW,4,'F');
 
-    if(logoDataUrl){
-      try{doc.addImage(logoDataUrl,'PNG',M,8,54,54);}catch(e){}
-    }
+    // Logo intentionally not embedded here to avoid mobile/browser canvas security issues.
+    // The PDF still generates reliably without depending on the logo image file.
 
     doc.setTextColor(...WHITE);
     doc.setFontSize(15);
@@ -860,9 +839,15 @@ async function generatePDF(){
   const filename=(v('client')||'Client')+'_'+dt2+'_Worksheet.pdf';
   doc.save(filename);
 
-  btn.disabled=false;
-  btn.textContent='Generate PDF Report';
-  msg.style.display='none';
+  }catch(err){
+    console.error('PDF generation error:',err);
+    alert('PDF generation failed: ' + (err && err.message ? err.message : err));
+    msg.textContent='PDF generation failed. See the alert message for details.';
+    msg.style.display='block';
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Generate PDF Report';
+  }
 }
 
 if('serviceWorker' in navigator){
