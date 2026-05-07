@@ -443,7 +443,26 @@ function renderGrid(){
   });
 }
 
+
+async function getLogoDataUrl(){
+  try{
+    const response = await fetch('icon-512.png');
+    const blob = await response.blob();
+
+    return await new Promise((resolve,reject)=>{
+      const reader = new FileReader();
+      reader.onloadend = ()=>resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }catch(e){
+    console.warn('Logo load failed',e);
+    return null;
+  }
+}
+
 async function generatePDF(){
+
   if(!validate())return;
 
   const btn=document.querySelector('.submit-btn');
@@ -462,6 +481,7 @@ async function generatePDF(){
     }
 
     const {jsPDF}=window.jspdf;
+    const logoDataUrl=await getLogoDataUrl();
   const doc=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
 
   const PW=595;
@@ -495,8 +515,13 @@ async function generatePDF(){
     doc.setFillColor(...MIDGREEN);
     doc.rect(0,66,PW,4,'F');
 
-    // Logo intentionally not embedded here to avoid mobile/browser canvas security issues.
-    // The PDF still generates reliably without depending on the logo image file.
+    if(logoDataUrl){
+      try{
+        doc.addImage(logoDataUrl,'PNG',M,8,54,54);
+      }catch(e){
+        console.warn('Could not add logo',e);
+      }
+    }
 
     doc.setTextColor(...WHITE);
     doc.setFontSize(15);
