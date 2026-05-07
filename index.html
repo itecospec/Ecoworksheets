@@ -109,6 +109,18 @@ if('serviceWorker' in navigator){
       <div class="field"><label>Exit Time</label><input type="time" id="exit"></div>
     </div>
     <div class="field"><label>Vehicle Registration</label><input type="text" id="vehicle" placeholder="Reg number"></div>
+    <div class="field">
+  <label>Pre Site Check — Is everything in order to carry out the works?</label>
+  <select id="pre_check">
+    <option value="">Select...</option>
+    <option value="Yes">Yes</option>
+    <option value="No">No</option>
+  </select>
+</div>
+<div class="field">
+  <label>Pre Site Check Details</label>
+  <textarea id="pre_check_detail" placeholder="Any issues preventing works from proceeding..."></textarea>
+</div>
     <div class="field"><label>Notes / Issues / Site not Ready</label><textarea id="proj_notes" placeholder="Any issues or notes..."></textarea></div>
   </div>
 </div>
@@ -581,6 +593,8 @@ async function generatePDF(){
   fieldRow('Team Leader / Colleagues',v('team'),false);
   fieldRow2('Arrival Time',v('arrival'),'Exit Time',v('exit'),true);
   fieldRow('Vehicle Registration',v('vehicle'),false);
+  fieldRow('Pre Site Check',v('pre_check'),true);
+noteBlock('Pre Site Check Details',v('pre_check_detail'));
   noteBlock('Notes / Issues',v('proj_notes'));y+=10;
 
   sectionBanner('Spray Foam');
