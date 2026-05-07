@@ -576,7 +576,16 @@ async function generatePDF(){
   check(30);
   doc.setFillColor(...MIDGREEN);doc.roundedRect(M+CW-110,y,110,22,4,4,'F');
   doc.setTextColor(...WHITE);doc.setFontSize(8);doc.setFont('helvetica','bold');
-  doc.text('INVOICE NO.',M+CW-55,y+9,{align:'center'});
+check(30);
+doc.setFillColor(...MIDGREEN);doc.roundedRect(M+CW-110,y,110,22,4,4,'F');
+doc.setTextColor(...WHITE);doc.setFontSize(8);doc.setFont('helvetica','bold');
+doc.text('INVOICE NO.',M+CW-55,y+9,{align:'center'});
+const invVal = v('invoice_no')||'';
+doc.setFillColor(...WHITE);doc.roundedRect(M+CW-108,y+10,106,18,3,3,'F');
+doc.setDrawColor(74,140,74);doc.setLineWidth(1);doc.roundedRect(M+CW-108,y+10,106,18,3,3,'S');
+doc.setTextColor(204,0,0);doc.setFontSize(9);doc.setFont('helvetica','bold');
+doc.text(invVal||'—',M+CW-55,y+22,{align:'center'});
+y+=36;
   // Fillable text field underneath the badge
   // Fillable invoice text field
   const invVal = v('invoice_no')||'';
