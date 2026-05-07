@@ -145,6 +145,8 @@ h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:
         <tr><td><input type="text" id="rm_type1"></td><td><input type="number" id="rm_qty1"></td></tr>
         <tr><td><input type="text" id="rm_type2"></td><td><input type="number" id="rm_qty2"></td></tr>
         <tr><td><input type="text" id="rm_type3"></td><td><input type="number" id="rm_qty3"></td></tr>
+        <tr><td><input type="text" id="rm_type4"></td><td><input type="number" id="rm_qty4"></td></tr>
+        <tr><td><input type="text" id="rm_type5"></td><td><input type="number" id="rm_qty5"></td></tr>
       </tbody>
     </table>
   </div>
@@ -185,6 +187,8 @@ h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:
         <tr><td><input type="text" id="ir_brand1"></td><td><input type="number" id="ir_qty1"></td></tr>
         <tr><td><input type="text" id="ir_brand2"></td><td><input type="number" id="ir_qty2"></td></tr>
         <tr><td><input type="text" id="ir_brand3"></td><td><input type="number" id="ir_qty3"></td></tr>
+        <tr><td><input type="text" id="ir_brand4"></td><td><input type="number" id="ir_qty4"></td></tr>
+        <tr><td><input type="text" id="ir_brand5"></td><td><input type="number" id="ir_qty5"></td></tr>
       </tbody>
     </table>
   </div>
@@ -411,7 +415,7 @@ async function generatePDF(){
       doc.setPage(i);
       doc.setFillColor(...GREEN);doc.rect(0,PH-36,PW,36,'F');
       doc.setTextColor(...WHITE);doc.setFontSize(8);doc.setFont('helvetica','normal');
-      doc.text('Ecospec  |  Site Daily Report  |  Confidential',M,PH-16);
+      doc.text('Ecospec  |  Site Worksheets | ',M,PH-16);
       doc.text('Page '+i+' of '+pages,PW-M,PH-16,{align:'right'});
       const own=v('owner'),cl=v('client');
       if(own||cl)doc.text([own,cl].filter(Boolean).join(' — '),PW/2,PH-16,{align:'center'});
@@ -590,7 +594,7 @@ async function generatePDF(){
   noteBlock('General Notes',v('notes'));
   noteBlock('Client Feedback',v('feedback'));
   fieldRow('Job Status (hours remaining)',v('job_status'),false);
-  fieldRow('Damage to Report?',v('damage_yn'),true);
+  fieldRow('Damage to Report? (Vehicle or properties',v('damage_yn'),true);
   if(v('damage_yn')==='Yes'){noteBlock('Damage Details',v('damage_detail'));fieldRow('Reported To',v('reported_to'),false);}
   y+=10;
   // Ecospec properties check
