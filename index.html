@@ -449,7 +449,7 @@ async function generatePDF(){
       doc.setPage(i);
       doc.setFillColor(...GREEN);doc.rect(0,PH-36,PW,36,'F');
       doc.setTextColor(...WHITE);doc.setFontSize(8);doc.setFont('helvetica','normal');
-      doc.text('Ecospec  |  Site Daily Report  |  Confidential',M,PH-16);
+      doc.text('Ecospec  |  Worksheet',M,PH-16);
       doc.text('Page '+i+' of '+pages,PW-M,PH-16,{align:'right'});
       const own=v('owner'),cl=v('client');
       if(own||cl)doc.text([own,cl].filter(Boolean).join(' — '),PW/2,PH-16,{align:'center'});
