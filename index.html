@@ -594,7 +594,7 @@ async function generatePDF(){
   noteBlock('General Notes',v('notes'));
   noteBlock('Client Feedback',v('feedback'));
   fieldRow('Job Status (hours remaining)',v('job_status'),false);
-  fieldRow('Damage to Report? (Vehicle or properties',v('damage_yn'),true);
+  fieldRow('Damage to Report? (Vehicle or properties)',v('damage_yn'),true);
   if(v('damage_yn')==='Yes'){noteBlock('Damage Details',v('damage_detail'));fieldRow('Reported To',v('reported_to'),false);}
   y+=10;
   // Ecospec properties check
