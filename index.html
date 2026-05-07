@@ -134,6 +134,8 @@ h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:
         <tr><td><input type="text" id="wd_tape1"></td><td><input type="number" id="wd_qty1"></td></tr>
         <tr><td><input type="text" id="wd_tape2"></td><td><input type="number" id="wd_qty2"></td></tr>
         <tr><td><input type="text" id="wd_tape3"></td><td><input type="number" id="wd_qty3"></td></tr>
+         <tr><td><input type="text" id="wd_tape4"></td><td><input type="number" id="wd_qty4"></td></tr>
+        <tr><td><input type="text" id="wd_tape5"></td><td><input type="number" id="wd_qty5"></td></tr>
       </tbody>
     </table>
     <div class="subsection-label">No. of Orcon Tubes</div>
@@ -212,7 +214,7 @@ h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:
     <div class="field"><label>General Notes</label><textarea id="notes" placeholder="Any general notes..."></textarea></div>
     <div class="field"><label>Client Feedback</label><textarea id="feedback" placeholder="Any feedback received on site..."></textarea></div>
     <div class="field"><label>Job Status (hours remaining)</label><input type="text" id="job_status"></div>
-    <div class="field" id="f-damage"><label>Damage to Report? <span class="req">*</span></label>
+    <div class="field" id="f-damage"><label>Damage to Report? (Properties or Vehicles)<span class="req">*</span></label>
       <select id="damage_yn"><option value="">Select...</option><option value="No">No</option><option value="Yes">Yes</option></select>
       <span class="err-msg">Please select an option</span></div>
     <div class="field"><label>Damage Details</label><textarea id="damage_detail" placeholder="Description, location, cause, photos?"></textarea></div>
@@ -401,7 +403,7 @@ async function generatePDF(){
     doc.setFillColor(...MIDGREEN);doc.rect(0,66,PW,4,'F');
     try{doc.addImage('data:image/jpeg;base64,'+LOGO_B64,'JPEG',M,8,140,54);}catch(e){}
     doc.setTextColor(...WHITE);doc.setFontSize(15);doc.setFont('helvetica','bold');
-    doc.text('Site Daily Report',PW/2,38,{align:'center'});
+    doc.text('Worksheet',PW/2,38,{align:'center'});
     const dt=v('date')||new Date().toISOString().slice(0,10);
     doc.setFillColor(...MIDGREEN);doc.roundedRect(PW-M-110,18,110,22,4,4,'F');
     doc.setTextColor(...WHITE);doc.setFontSize(9);doc.setFont('helvetica','normal');
