@@ -15,7 +15,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f0f7f0;padding:1rem 1rem 4rem 1rem;color:#1a1a2e}
 .top-header{display:flex;align-items:center;justify-content:center;margin-bottom:0.5rem;padding:1rem 0}
-.top-header img{height:56px}
+.top-header img{height:110px;max-width:420px;object-fit:contain}
 h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:1.5rem;letter-spacing:1px;text-transform:uppercase}
 .section{background:#fff;border:1px solid #c8e0c8;border-radius:12px;margin-bottom:1rem;overflow:hidden}
 .section-header{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;cursor:pointer;user-select:none;background:#f0f7f0;border-bottom:1px solid #c8e0c8}
@@ -65,7 +65,7 @@ h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:
 <body>
 
 <div class="top-header">
-  <img id="app_logo" src="icon-192.png" alt="Ecospec Logo">
+  <img id="app_logo" src="logo.png" alt="Ecospec Logo" onerror="this.onerror=null;this.src='icon-192.png';">
 </div>
 
 <div id="val-banner">
@@ -445,14 +445,17 @@ function renderGrid(){
 
 
 async function getLogoDataUrl(){
+  const img=document.getElementById('app_logo');
+  if(!img || !img.src)return null;
+
   try{
-    const response = await fetch('icon-512.png');
-    const blob = await response.blob();
+    const response=await fetch(img.src);
+    const blob=await response.blob();
 
     return await new Promise((resolve,reject)=>{
-      const reader = new FileReader();
-      reader.onloadend = ()=>resolve(reader.result);
-      reader.onerror = reject;
+      const reader=new FileReader();
+      reader.onloadend=()=>resolve(reader.result);
+      reader.onerror=reject;
       reader.readAsDataURL(blob);
     });
   }catch(e){
@@ -517,7 +520,7 @@ async function generatePDF(){
 
     if(logoDataUrl){
       try{
-        doc.addImage(logoDataUrl,'PNG',M,8,54,54);
+        doc.addImage(logoDataUrl,'PNG',M,8,140,54);
       }catch(e){
         console.warn('Could not add logo',e);
       }
