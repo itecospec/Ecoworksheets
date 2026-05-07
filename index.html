@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ecospec</title>
+<title>Ecospec Worksheets</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2d6a2d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ecospec Worksheets">
+<link rel="apple-touch-icon" href="icon-192.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2d6a2d">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -63,6 +69,15 @@ h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:
 
 </style>
 </head>
+  <script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Ecoworksheets/sw.js')
+      .then(() => console.log('Ecospec: offline ready'))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+</script>
 <body>
 
 <div class="top-header">
