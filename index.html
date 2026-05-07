@@ -99,6 +99,7 @@ if('serviceWorker' in navigator){
       <div class="field" id="f-date"><label>Date <span class="req">*</span></label><input type="date" id="date"><span class="err-msg">Date is required</span></div>
       <div class="field" id="f-owner"><label>Project Owner <span class="req">*</span></label>
         <select id="owner"><option value="">Select...</option><option>TJ</option><option>Mick</option><option>Ciaran</option></select>
+        <select id="owner" onchange="prefillInvoice()">
         <span class="err-msg">Project Owner is required</span></div>
     </div>
     <div class="field" id="f-client"><label>Client Name <span class="req">*</span></label><input type="text" id="client" placeholder="Client name"><span class="err-msg">Client Name is required</span></div>
@@ -289,7 +290,15 @@ function clearErrors(){
   if(ecoErr)ecoErr.classList.remove('show');
   document.getElementById('val-banner').style.display='none';
 }
-
+function prefillInvoice(){
+  const owner = v('owner');
+  if(!owner) return;
+  const prefix = owner[0].toUpperCase();
+  const inv = document.getElementById('invoice_no');
+  // Replace any existing leading letter prefix, then prepend new one
+  inv.value = prefix + '-' + inv.value.replace(/^[A-Z]-/,'');
+  inv.style.color = '#cc0000';
+}
 function validate(){
   clearErrors();
   const errors=[];
