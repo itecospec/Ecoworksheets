@@ -248,7 +248,18 @@ if('serviceWorker' in navigator){
   <div class="section-body open">
     <div class="field"><label>General Notes</label><textarea id="notes" placeholder="Any general notes..."></textarea></div>
     <div class="field"><label>Client Feedback</label><textarea id="feedback" placeholder="Any feedback received on site..."></textarea></div>
-    <div class="field"><label>Job Status (hours remaining)</label><input type="text" id="job_status"></div>
+   <div class="field">
+  <label>Is Job Completed?</label>
+  <select id="job_completed" onchange="document.getElementById('hours_remaining_row').style.display=this.value==='No'?'flex':'none'">
+    <option value="">Select...</option>
+    <option value="Yes">Yes</option>
+    <option value="No">No</option>
+  </select>
+</div>
+<div class="field" id="hours_remaining_row" style="display:none">
+  <label>Hours Remaining</label>
+  <input type="text" id="job_status" placeholder="Estimated hours remaining...">
+</div>
     <div class="field" id="f-damage"><label>Damage to Report? <span class="req">*</span></label>
       <select id="damage_yn"><option value="">Select...</option><option value="No">No</option><option value="Yes">Yes</option></select>
       <span class="err-msg">Please select an option</span></div>
@@ -632,7 +643,8 @@ noteBlock('Pre Site Check Details',v('pre_check_detail'));
   sectionBanner('Sign-off & Notes');
   noteBlock('General Notes',v('notes'));
   noteBlock('Client Feedback',v('feedback'));
-  fieldRow('Job Status (hours remaining)',v('job_status'),false);
+  fieldRow('Is Job Completed?',v('job_completed'),false);
+if(v('job_completed')==='No') fieldRow('Hours Remaining',v('job_status'),true);
   fieldRow('Damage to Report?',v('damage_yn'),true);
   if(v('damage_yn')==='Yes'){noteBlock('Damage Details',v('damage_detail'));fieldRow('Reported To',v('reported_to'),false);}
   y+=10;
