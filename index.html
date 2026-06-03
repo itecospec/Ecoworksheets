@@ -150,7 +150,23 @@ if('serviceWorker' in navigator){
       </div>
     </div>
     <div class="subsection-label">Data Trac</div>
+	<div class="field">
+  <label>Was There a Changeover?</label>
+
+  <div style="display:flex;gap:1.5rem;padding:4px 0">
+    <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
+      <input type="radio" name="changeover" id="changeover_yes" value="Yes" style="width:auto">
+      Yes
+    </label>
+
+    <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
+      <input type="radio" name="changeover" id="changeover_no" value="No" style="width:auto">
+      No
+    </label>
+  </div>
+</div>
     <div class="field"><label>Data Trac Reading</label><input type="text" id="dt_reading"></div>
+	
     <div style="color:#cc0000;font-size:13px;font-weight:700;line-height:1.4;margin-top:4px">
   For WALLTITE please document and photograph any damages to walls noted prior to commencing works
 </div>
@@ -665,6 +681,11 @@ noteBlock('Pre Site Check Details',v('pre_check_detail'));
     fieldRow2('Quantity – Walls (strokes)',v('sf_walls'),'Quantity – Roof (strokes)',v('sf_roof'),false);
     fieldRow('Waste Foam Collected',sfWasteVal ? sfWasteVal.value : '—',true);
     subBanner('Data Trac');
+	const changeover =
+  document.getElementById('changeover_yes')?.checked ? 'Yes' :
+  document.getElementById('changeover_no')?.checked ? 'No' : '';
+
+fieldRow('Was There a Changeover?', changeover, false);
     fieldRow('Data Trac Reading',v('dt_reading'),false);
     y+=10;
   }
