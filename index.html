@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -320,6 +319,49 @@ function validate(){
   req('address','f-address','Site Address');
   req('team','f-team','Team Leader / Colleagues');
   req('damage_yn','f-damage','Damage to Report?');
+  // Spray Foam conditional validation:
+  // If any Spray Foam field is filled in, the whole Spray Foam section becomes required.
+  const sprayFoamFields = [
+    { id: 'sf_product', label: 'Product Name' },
+    { id: 'sf_batch_a', label: 'Batch No. A Side' },
+    { id: 'sf_batch_b', label: 'Batch No. B Side' },
+    { id: 'sf_walls', label: 'Quantity – Walls' },
+    { id: 'sf_roof', label: 'Quantity – Roof' },
+    { id: 'dt_reading', label: 'Data Trac Reading' }
+  ];
+
+  const sprayFoamWaste = document.querySelector('input[name="sf_waste"]:checked');
+  const sprayFoamStarted = sprayFoamFields.some(f => v(f.id).trim() !== '') || !!sprayFoamWaste;
+
+  if(sprayFoamStarted){
+    let sprayFoamHasError = false;
+
+    sprayFoamFields.forEach(f => {
+      if(!v(f.id).trim()){
+        const input = document.getElementById(f.id);
+        const wrap = input ? input.closest('.field') : null;
+        if(wrap)wrap.classList.add('field-error');
+        errors.push('Spray Foam - ' + f.label);
+        sprayFoamHasError = true;
+      }
+    });
+
+    if(!sprayFoamWaste){
+      const wasteInput = document.getElementById('sf_waste_yes') || document.getElementById('sf_waste_no');
+      const wasteWrap = wasteInput ? wasteInput.closest('.field') : null;
+      if(wasteWrap)wasteWrap.classList.add('field-error');
+      errors.push('Spray Foam - Waste Foam Collected');
+      sprayFoamHasError = true;
+    }
+
+    if(sprayFoamHasError){
+      const firstSfInput = document.getElementById('sf_product');
+      const sfBody = firstSfInput ? firstSfInput.closest('.section-body') : null;
+      const sfChevron = sfBody ? sfBody.parentElement.querySelector('.chevron') : null;
+      if(sfBody)sfBody.classList.add('open');
+      if(sfChevron)sfChevron.classList.add('open');
+    }
+  }
   if(!document.querySelector('input[name="ecospec_check"]:checked')){
     const eco=document.getElementById('eco-box');
     if(eco)eco.classList.add('eco-error');
@@ -611,14 +653,21 @@ async function generatePDF(){
 noteBlock('Pre Site Check Details',v('pre_check_detail'));
   noteBlock('Notes / Issues',v('proj_notes'));y+=10;
 
-  sectionBanner('Spray Foam');
-  fieldRow('Product Name',v('sf_product'),false);
-  fieldRow2('Batch No. A Side',v('sf_batch_a'),'Batch No. B Side',v('sf_batch_b'),true);
-  fieldRow2('Quantity – Walls',v('sf_walls'),'Quantity – Roof',v('sf_roof'),false);
-  const wasteVal=document.querySelector('input[name="sf_waste"]:checked');
-  fieldRow('Waste Foam Collected',wasteVal?wasteVal.value:'—',true);
-  subBanner('Data Trac');
-  fieldRow('Data Trac Reading',v('dt_reading'),false);y+=10;
+  const sfWasteVal = document.querySelector('input[name="sf_waste"]:checked');
+  const sprayFoamHasOutput = [
+    'sf_product','sf_batch_a','sf_batch_b','sf_walls','sf_roof','dt_reading'
+  ].some(id => v(id).trim() !== '') || !!sfWasteVal;
+
+  if(sprayFoamHasOutput){
+    sectionBanner('Spray Foam');
+    fieldRow('Product Name',v('sf_product'),false);
+    fieldRow2('Batch No. A Side',v('sf_batch_a'),'Batch No. B Side',v('sf_batch_b'),true);
+    fieldRow2('Quantity – Walls (strokes)',v('sf_walls'),'Quantity – Roof (strokes)',v('sf_roof'),false);
+    fieldRow('Waste Foam Collected',sfWasteVal ? sfWasteVal.value : '—',true);
+    subBanner('Data Trac');
+    fieldRow('Data Trac Reading',v('dt_reading'),false);
+    y+=10;
+  }
 
   sectionBanner('Air Tightness');
   subBanner('Windows & Doors');
