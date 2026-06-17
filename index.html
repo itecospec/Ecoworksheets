@@ -803,10 +803,9 @@ if(v('job_completed')==='No') fieldRow('Hours Remaining',v('job_status'),true);
   photoPages();
   drawFooter();
 
-  const dt2=dateForFilename(v('date'));
-  const lateExitFilePrefix = isTimeAtOrAfter(v('exit'), LATE_EXIT_AFTER) ? '!' : '';
-  doc.save(lateExitFilePrefix+(v('client')||'Client')+'_'+dt2+'_Worksheet.pdf');
-
+const dt2=dateForFilename(v('date'));
+const lateExitFilePrefix = isTimeAtOrAfter(v('exit'), LATE_EXIT_AFTER) ? '~' : '';
+doc.save(lateExitFilePrefix+(v('client')||'Client')+'_'+dt2+'_Worksheet.pdf');
   btn.disabled=false;btn.textContent='Generate PDF Report';msg.style.display='none';
 }
 </script>
