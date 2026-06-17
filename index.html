@@ -104,8 +104,8 @@ if('serviceWorker' in navigator){
     <div class="field" id="f-address"><label>Site Address <span class="req">*</span></label><input type="text" id="address" placeholder="Full address"><span class="err-msg">Site Address is required</span></div>
     <div class="field" id="f-team"><label>Team Leader / Colleagues <span class="req">*</span></label><input type="text" id="team" placeholder="Names"><span class="err-msg">Team Leader / Colleagues is required</span></div>
     <div class="row2">
-      <div class="field"><label>Arrival Time</label><input type="time" id="arrival"></div>
-      <div class="field"><label>Exit Time</label><input type="time" id="exit"></div>
+      <div class="field" id="f-arrival"><label>Arrival Time <span class="req">*</span></label><input type="time" id="arrival" required step="60"><span class="err-msg">Arrival Time is required</span></div>
+      <div class="field" id="f-exit"><label>Exit Time <span class="req">*</span></label><input type="time" id="exit" required step="60"><span class="err-msg">Exit Time is required</span></div>
     </div>
     <div class="field"><label>Vehicle Registration</label><input type="text" id="vehicle" placeholder="Reg number"></div>
     <div class="field">
@@ -309,6 +309,75 @@ if('serviceWorker' in navigator){
 <script>
 function toggle(h){const b=h.parentElement.querySelector('.section-body'),c=h.querySelector('.chevron');if(b)b.classList.toggle('open');if(c)c.classList.toggle('open');}
 function v(id){return(document.getElementById(id)||{}).value||'';}
+function formatDateDDMMYYYY(dateValue){
+  if(!dateValue)return '';
+  const parts=dateValue.split('-');
+  if(parts.length!==3)return dateValue;
+  const [year,month,day]=parts;
+  return `${day}/${month}/${year}`;
+}
+function dateForFilename(dateValue){
+  if(!dateValue)return new Date().toISOString().slice(0,10);
+  const parts=dateValue.split('-');
+  if(parts.length!==3)return dateValue;
+  const [year,month,day]=parts;
+  return `${day}-${month}-${year}`;
+}
+
+/* --- Late exit email alert settings --- */
+const LATE_EXIT_AFTER = '16:00'; // 4:00pm
+const LATE_EXIT_WEB_APP_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+// This email is only used by Code.gs. Change it there if management email is different.
+
+function isTimeAtOrAfter(timeValue, cutoffValue){
+  if(!timeValue || !cutoffValue)return false;
+  return timeValue >= cutoffValue; // Works for HH:MM 24-hour time inputs. Includes 16:00 exactly.
+}
+
+function worksheetTitle(){
+  return 'Worksheet';
+}
+
+function worksheetPayload(){
+  return {
+    date: formatDateDDMMYYYY(v('date')),
+    rawDate: v('date'),
+    owner: v('owner'),
+    client: v('client'),
+    address: v('address'),
+    team: v('team'),
+    arrival: v('arrival'),
+    exit: v('exit'),
+    damage: v('damage_yn')
+  };
+}
+
+async function sendLateExitAlertIfNeeded(){
+  // Only send an alert when Exit Time is 16:00 or later.
+  if(!isTimeAtOrAfter(v('exit'), LATE_EXIT_AFTER))return false;
+
+  if(!LATE_EXIT_WEB_APP_URL || LATE_EXIT_WEB_APP_URL.includes('PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE')){
+    console.warn('Late exit email not sent: paste your Google Apps Script Web App URL into LATE_EXIT_WEB_APP_URL.');
+    return false;
+  }
+
+  const payload = worksheetPayload();
+
+  try{
+    // This works from local files and GitHub Pages. no-cors is used because Apps Script
+    // web apps do not return normal CORS headers to GitHub Pages.
+    await fetch(LATE_EXIT_WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+    return true;
+  }catch(err){
+    console.warn('Late exit email request failed:', err);
+    return false; // Do not stop the PDF from generating.
+  }
+}
 
 function clearErrors(){
   document.querySelectorAll('.field-error').forEach(el=>el.classList.remove('field-error'));
@@ -334,6 +403,8 @@ function validate(){
   req('client','f-client','Client Name');
   req('address','f-address','Site Address');
   req('team','f-team','Team Leader / Colleagues');
+  req('arrival','f-arrival','Arrival Time');
+  req('exit','f-exit','Exit Time');
   req('damage_yn','f-damage','Damage to Report?');
   // Spray Foam conditional validation:
   // If any Spray Foam field is filled in, the whole Spray Foam section becomes required.
@@ -492,6 +563,7 @@ async function generatePDF(){
   btn.disabled=true;btn.textContent='Generating...';msg.style.display='block';
 
   await new Promise(r=>setTimeout(r,50));
+  await sendLateExitAlertIfNeeded();
 
   const{jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
@@ -507,8 +579,8 @@ async function generatePDF(){
     doc.setFillColor(...MIDGREEN);doc.rect(0,66,PW,4,'F');
     try{doc.addImage('data:image/jpeg;base64,'+LOGO_B64,'JPEG',M,8,140,54);}catch(e){}
     doc.setTextColor(...WHITE);doc.setFontSize(15);doc.setFont('helvetica','bold');
-    doc.text('Worksheet',PW/2,38,{align:'center'});
-    const dt=v('date')||new Date().toISOString().slice(0,10);
+    doc.text(worksheetTitle(),PW/2,38,{align:'center'});
+    const dt=formatDateDDMMYYYY(v('date'))||formatDateDDMMYYYY(new Date().toISOString().slice(0,10));
     doc.setFillColor(...MIDGREEN);doc.roundedRect(PW-M-110,18,110,22,4,4,'F');
     doc.setTextColor(...WHITE);doc.setFontSize(9);doc.setFont('helvetica','normal');
     doc.text(dt,PW-M-55,32,{align:'center'});
@@ -659,7 +731,7 @@ async function generatePDF(){
   y+=36;
 
   sectionBanner('Project Details');
-  fieldRow2('Date',v('date'),'Project Owner',v('owner'),false);
+  fieldRow2('Date',formatDateDDMMYYYY(v('date')),'Project Owner',v('owner'),false);
   fieldRow('Client Name',v('client'),true);
   fieldRow('Site Address',v('address'),false);
   fieldRow('Team Leader / Colleagues',v('team'),false);
@@ -731,8 +803,9 @@ if(v('job_completed')==='No') fieldRow('Hours Remaining',v('job_status'),true);
   photoPages();
   drawFooter();
 
-  const dt2=v('date')||new Date().toISOString().slice(0,10);
-  doc.save((v('client')||'Client')+'_'+dt2+'_Worksheet.pdf');
+  const dt2=dateForFilename(v('date'));
+  const lateExitFilePrefix = isTimeAtOrAfter(v('exit'), LATE_EXIT_AFTER) ? '!' : '';
+  doc.save(lateExitFilePrefix+(v('client')||'Client')+'_'+dt2+'_Worksheet.pdf');
 
   btn.disabled=false;btn.textContent='Generate PDF Report';msg.style.display='none';
 }
