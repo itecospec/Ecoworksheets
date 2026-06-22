@@ -66,6 +66,12 @@ h1{font-size:15px;font-weight:600;color:#4a8c4a;text-align:center;margin-bottom:
 #val-banner ul{margin:0;padding-left:1.25rem}
 #val-banner ul li{color:#cc0000;font-size:13px;margin-bottom:2px}
 
+.repeat-card{border:1px solid #c8e0c8;border-radius:10px;padding:0.75rem;background:#f8fff8;margin-bottom:0.75rem}
+.repeat-card-title{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;color:#2d6a2d;margin-bottom:0.5rem}
+.add-btn,.remove-row-btn{border:none;border-radius:8px;padding:8px 10px;font-size:13px;font-weight:700;cursor:pointer}
+.add-btn{background:#2d6a2d;color:#fff;width:100%;margin-top:0.25rem}
+.remove-row-btn{background:#cc0000;color:#fff;width:auto}
+
 </style>
 </head>
   <script>
@@ -95,7 +101,15 @@ if('serviceWorker' in navigator){
   </div>
   <div class="section-body open">
     <div class="row2">
-      <div class="field" id="f-date"><label>Date <span class="req">*</span></label><input type="date" id="date"><span class="err-msg">Date is required</span></div>
+      <div class="field" id="f-date"><label>Date(s) <span class="req">*</span></label>
+        <div id="dateRows">
+          <div class="row2 date-row">
+            <input type="date" id="date" class="work-date">
+            <button type="button" class="remove-row-btn" onclick="removeDateRow(this)" style="visibility:hidden">Remove</button>
+          </div>
+        </div>
+        <button type="button" class="add-btn" onclick="addDateRow()">+ Add Another Date</button>
+        <span class="err-msg">At least one Date is required</span></div>
       <div class="field" id="f-owner"><label>Project Owner <span class="req">*</span></label>
         <select id="owner"><option value="">Select...</option><option>TJ</option><option>Mick</option><option>Ciaran</option></select>
         <span class="err-msg">Project Owner is required</span></div>
@@ -130,49 +144,40 @@ if('serviceWorker' in navigator){
     <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
   <div class="section-body">
-    <div class="field"><label>Product Name</label><input type="text" id="sf_product"></div>
-    <div class="row2">
-      <div class="field"><label>Batch No. A Side</label><input type="text" id="sf_batch_a"></div>
-      <div class="field"><label>Batch No. B Side</label><input type="text" id="sf_batch_b"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label>Quantity – Walls (strokes)</label><input type="number" id="sf_walls"></div>
-      <div class="field"><label>Quantity – Roof (strokes)</label><input type="number" id="sf_roof"></div>
-    </div>
-    <div class="field"><label>Waste Foam Collected</label>
-      <div style="display:flex;gap:1.5rem;padding:4px 0">
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
-          <input type="radio" name="sf_waste" id="sf_waste_yes" value="Yes" style="width:auto"> Yes
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
-          <input type="radio" name="sf_waste" id="sf_waste_no" value="No" style="width:auto"> No
-        </label>
+    <div id="sprayFoamRows">
+      <div class="spray-foam-row repeat-card">
+        <div class="repeat-card-title"><span>Spray Foam Type 1</span><button type="button" class="remove-row-btn" onclick="removeSprayFoamRow(this)" style="visibility:hidden">Remove</button></div>
+        <div class="field"><label>Product Name / Type of Spray Foam</label><input type="text" id="sf_product" class="sf_product"></div>
+        <div class="row2">
+          <div class="field"><label>Batch No. A Side</label><input type="text" id="sf_batch_a" class="sf_batch_a"></div>
+          <div class="field"><label>Batch No. B Side</label><input type="text" id="sf_batch_b" class="sf_batch_b"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Quantity – Walls (strokes)</label><input type="number" id="sf_walls" class="sf_walls"></div>
+          <div class="field"><label>Quantity – Roof (strokes)</label><input type="number" id="sf_roof" class="sf_roof"></div>
+        </div>
+        <div class="field"><label>Waste Foam Collected</label>
+          <div style="display:flex;gap:1.5rem;padding:4px 0">
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="sf_waste_1" id="sf_waste_yes" class="sf_waste_yes" value="Yes" style="width:auto"> Yes</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="sf_waste_1" id="sf_waste_no" class="sf_waste_no" value="No" style="width:auto"> No</label>
+          </div>
+        </div>
+        <div class="subsection-label">Data Trac</div>
+        <div class="field"><label>Was there a change over?</label>
+          <div style="display:flex;gap:1.5rem;padding:4px 0">
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="changeover_1" id="changeover_yes" class="changeover_yes" value="Yes" style="width:auto"> Yes</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="changeover_1" id="changeover_no" class="changeover_no" value="No" style="width:auto"> No</label>
+          </div>
+        </div>
+        <div class="field"><label>Data Trac Reading</label><input type="text" id="dt_reading" class="dt_reading"></div>
       </div>
     </div>
-    <div class="subsection-label">Data Trac</div>
-	<div class="field">
-  <label>Was there a change over?</label>
-
-  <div style="display:flex;gap:1.5rem;padding:4px 0">
-    <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
-      <input type="radio" name="changeover" id="changeover_yes" value="Yes" style="width:auto">
-      Yes
-    </label>
-
-    <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
-      <input type="radio" name="changeover" id="changeover_no" value="No" style="width:auto">
-      No
-    </label>
-  </div>
-</div>
-    <div class="field"><label>Data Trac Reading</label><input type="text" id="dt_reading"></div>
-	
+    <button type="button" class="add-btn" onclick="addSprayFoamRow()">+ Add Another Type of Spray Foam</button>
     <div style="color:#cc0000;font-size:13px;font-weight:700;line-height:1.4;margin-top:4px">
-  For WALLTITE please document and photograph any damages to walls noted prior to commencing works
-</div>
+      For WALLTITE please document and photograph any damages to walls noted prior to commencing works
+    </div>
   </div>
 </div>
-
 <div class="section">
   <div class="section-header" onclick="toggle(this)">
     <h2>Air Tightness</h2>
@@ -388,6 +393,61 @@ function clearErrors(){
   document.getElementById('val-banner').style.display='none';
 }
 
+
+function collectDates(){
+  return Array.from(document.querySelectorAll('.work-date')).map(i=>i.value.trim()).filter(Boolean);
+}
+function addDateRow(){
+  const wrap=document.getElementById('dateRows');
+  const div=document.createElement('div');
+  div.className='row2 date-row';
+  div.style.marginTop='0.5rem';
+  div.innerHTML='<input type="date" class="work-date"><button type="button" class="remove-row-btn" onclick="removeDateRow(this)">Remove</button>';
+  wrap.appendChild(div);
+}
+function removeDateRow(btn){
+  btn.closest('.date-row').remove();
+}
+function updateSprayFoamTitles(){
+  document.querySelectorAll('.spray-foam-row').forEach((row,i)=>{
+    row.querySelector('.repeat-card-title span').textContent='Spray Foam Type '+(i+1);
+    row.querySelectorAll('input[type="radio"]').forEach(r=>{
+      if(r.classList.contains('sf_waste_yes') || r.classList.contains('sf_waste_no')) r.name='sf_waste_'+(i+1);
+      if(r.classList.contains('changeover_yes') || r.classList.contains('changeover_no')) r.name='changeover_'+(i+1);
+    });
+    const remove=row.querySelector('.remove-row-btn');
+    if(remove)remove.style.visibility=i===0?'hidden':'visible';
+  });
+}
+function addSprayFoamRow(){
+  const wrap=document.getElementById('sprayFoamRows');
+  const clone=wrap.querySelector('.spray-foam-row').cloneNode(true);
+  clone.querySelectorAll('input').forEach(input=>{input.value='';input.checked=false;input.removeAttribute('id');});
+  wrap.appendChild(clone);
+  updateSprayFoamTitles();
+}
+function removeSprayFoamRow(btn){
+  btn.closest('.spray-foam-row').remove();
+  updateSprayFoamTitles();
+}
+function collectSprayFoams(){
+  return Array.from(document.querySelectorAll('.spray-foam-row')).map(row=>{
+    const waste=row.querySelector('.sf_waste_yes:checked') ? 'Yes' : row.querySelector('.sf_waste_no:checked') ? 'No' : '';
+    const change=row.querySelector('.changeover_yes:checked') ? 'Yes' : row.querySelector('.changeover_no:checked') ? 'No' : '';
+    return {
+      product: row.querySelector('.sf_product')?.value.trim() || '',
+      batchA: row.querySelector('.sf_batch_a')?.value.trim() || '',
+      batchB: row.querySelector('.sf_batch_b')?.value.trim() || '',
+      walls: row.querySelector('.sf_walls')?.value.trim() || '',
+      roof: row.querySelector('.sf_roof')?.value.trim() || '',
+      waste,
+      changeover: change,
+      dt: row.querySelector('.dt_reading')?.value.trim() || '',
+      row
+    };
+  }).filter(sf=>sf.product||sf.batchA||sf.batchB||sf.walls||sf.roof||sf.waste||sf.changeover||sf.dt);
+}
+
 function validate(){
   clearErrors();
   const errors=[];
@@ -398,7 +458,7 @@ function validate(){
       errors.push(label);
     }
   }
-  req('date','f-date','Date');
+  if(!collectDates().length){ document.getElementById('f-date').classList.add('field-error'); errors.push('Date'); }
   req('owner','f-owner','Project Owner');
   req('client','f-client','Client Name');
   req('address','f-address','Site Address');
@@ -407,48 +467,38 @@ function validate(){
   req('exit','f-exit','Exit Time');
   req('damage_yn','f-damage','Damage to Report?');
   // Spray Foam conditional validation:
-  // If any Spray Foam field is filled in, the whole Spray Foam section becomes required.
-  const sprayFoamFields = [
-    { id: 'sf_product', label: 'Product Name' },
-    { id: 'sf_batch_a', label: 'Batch No. A Side' },
-    { id: 'sf_batch_b', label: 'Batch No. B Side' },
-    { id: 'sf_walls', label: 'Quantity – Walls' },
-    { id: 'sf_roof', label: 'Quantity – Roof' },
-    { id: 'dt_reading', label: 'Data Trac Reading' }
-  ];
-
-  const sprayFoamWaste = document.querySelector('input[name="sf_waste"]:checked');
-  const sprayFoamStarted = sprayFoamFields.some(f => v(f.id).trim() !== '') || !!sprayFoamWaste;
-
-  if(sprayFoamStarted){
+  // Each spray foam row is treated separately. If any field in a row is started, that row is required.
+  collectSprayFoams().forEach((sf, index) => {
     let sprayFoamHasError = false;
-
-    sprayFoamFields.forEach(f => {
-      if(!v(f.id).trim()){
-        const input = document.getElementById(f.id);
-        const wrap = input ? input.closest('.field') : null;
+    const required = [
+      ['product','Product Name / Type of Spray Foam','.sf_product'],
+      ['batchA','Batch No. A Side','.sf_batch_a'],
+      ['batchB','Batch No. B Side','.sf_batch_b'],
+      ['walls','Quantity – Walls','.sf_walls'],
+      ['roof','Quantity – Roof','.sf_roof'],
+      ['dt','Data Trac Reading','.dt_reading']
+    ];
+    required.forEach(([key,label,selector])=>{
+      if(!sf[key]){
+        const wrap = sf.row.querySelector(selector)?.closest('.field');
         if(wrap)wrap.classList.add('field-error');
-        errors.push('Spray Foam - ' + f.label);
+        errors.push('Spray Foam Type '+(index+1)+' - '+label);
         sprayFoamHasError = true;
       }
     });
-
-    if(!sprayFoamWaste){
-      const wasteInput = document.getElementById('sf_waste_yes') || document.getElementById('sf_waste_no');
-      const wasteWrap = wasteInput ? wasteInput.closest('.field') : null;
-      if(wasteWrap)wasteWrap.classList.add('field-error');
-      errors.push('Spray Foam - Waste Foam Collected');
+    if(!sf.waste){
+      const wrap = sf.row.querySelector('.sf_waste_yes')?.closest('.field');
+      if(wrap)wrap.classList.add('field-error');
+      errors.push('Spray Foam Type '+(index+1)+' - Waste Foam Collected');
       sprayFoamHasError = true;
     }
-
     if(sprayFoamHasError){
-      const firstSfInput = document.getElementById('sf_product');
-      const sfBody = firstSfInput ? firstSfInput.closest('.section-body') : null;
+      const sfBody = sf.row.closest('.section-body');
       const sfChevron = sfBody ? sfBody.parentElement.querySelector('.chevron') : null;
       if(sfBody)sfBody.classList.add('open');
       if(sfChevron)sfChevron.classList.add('open');
     }
-  }
+  });
   if(!document.querySelector('input[name="ecospec_check"]:checked')){
     const eco=document.getElementById('eco-box');
     if(eco)eco.classList.add('eco-error');
@@ -580,7 +630,7 @@ async function generatePDF(){
     try{doc.addImage('data:image/jpeg;base64,'+LOGO_B64,'JPEG',M,8,140,54);}catch(e){}
     doc.setTextColor(...WHITE);doc.setFontSize(15);doc.setFont('helvetica','bold');
     doc.text(worksheetTitle(),PW/2,38,{align:'center'});
-    const dt=formatDateDDMMYYYY(v('date'))||formatDateDDMMYYYY(new Date().toISOString().slice(0,10));
+    const dt=collectDates().map(formatDateDDMMYYYY).join(', ')||formatDateDDMMYYYY(new Date().toISOString().slice(0,10));
     doc.setFillColor(...MIDGREEN);doc.roundedRect(PW-M-110,18,110,22,4,4,'F');
     doc.setTextColor(...WHITE);doc.setFontSize(9);doc.setFont('helvetica','normal');
     doc.text(dt,PW-M-55,32,{align:'center'});
@@ -731,7 +781,7 @@ async function generatePDF(){
   y+=36;
 
   sectionBanner('Project Details');
-  fieldRow2('Date',formatDateDDMMYYYY(v('date')),'Project Owner',v('owner'),false);
+  fieldRow2('Date(s)',collectDates().map(formatDateDDMMYYYY).join(', '),'Project Owner',v('owner'),false);
   fieldRow('Client Name',v('client'),true);
   fieldRow('Site Address',v('address'),false);
   fieldRow('Team Leader / Colleagues',v('team'),false);
@@ -741,25 +791,21 @@ async function generatePDF(){
 noteBlock('Pre Site Check Details',v('pre_check_detail'));
   noteBlock('Notes / Issues',v('proj_notes'));y+=10;
 
-  const sfWasteVal = document.querySelector('input[name="sf_waste"]:checked');
-  const sprayFoamHasOutput = [
-    'sf_product','sf_batch_a','sf_batch_b','sf_walls','sf_roof','dt_reading'
-  ].some(id => v(id).trim() !== '') || !!sfWasteVal;
-
-  if(sprayFoamHasOutput){
+  const sprayFoams = collectSprayFoams();
+  if(sprayFoams.length){
     sectionBanner('Spray Foam');
-    fieldRow('Product Name',v('sf_product'),false);
-    fieldRow2('Batch No. A Side',v('sf_batch_a'),'Batch No. B Side',v('sf_batch_b'),true);
-    fieldRow2('Quantity – Walls (strokes)',v('sf_walls'),'Quantity – Roof (strokes)',v('sf_roof'),false);
-    fieldRow('Waste Foam Collected',sfWasteVal ? sfWasteVal.value : '—',true);
-    subBanner('Data Trac');
-	const changeover =
-  document.getElementById('changeover_yes')?.checked ? 'Yes' :
-  document.getElementById('changeover_no')?.checked ? 'No' : '';
-
-fieldRow('Was There a Changeover?', changeover, false);
-    fieldRow('Data Trac Reading',v('dt_reading'),false);
-    y+=10;
+    sprayFoams.forEach((sf,index)=>{
+      subBanner('Spray Foam Type '+(index+1));
+      fieldRow('Product Name / Type of Spray Foam',sf.product,false);
+      fieldRow2('Batch No. A Side',sf.batchA,'Batch No. B Side',sf.batchB,true);
+      fieldRow2('Quantity – Walls (strokes)',sf.walls,'Quantity – Roof (strokes)',sf.roof,false);
+      fieldRow('Waste Foam Collected',sf.waste || '—',true);
+      subBanner('Data Trac');
+      fieldRow('Was There a Changeover?', sf.changeover || '—', false);
+      fieldRow('Data Trac Reading',sf.dt,false);
+      y+=6;
+    });
+    y+=4;
   }
 
   sectionBanner('Air Tightness');
@@ -820,4 +866,3 @@ if('serviceWorker' in navigator){
 }
 </script>
 </body>
-</html>
