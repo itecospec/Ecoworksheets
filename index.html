@@ -146,30 +146,42 @@ if('serviceWorker' in navigator){
   <div class="section-body">
     <div id="sprayFoamRows">
       <div class="spray-foam-row repeat-card">
-        <div class="repeat-card-title"><span>Spray Foam Type 1</span><button type="button" class="remove-row-btn" onclick="removeSprayFoamRow(this)" style="visibility:hidden">Remove</button></div>
-        <div class="field"><label>Product Name / Type of Spray Foam</label><input type="text" id="sf_product" class="sf_product"></div>
+        <div class="repeat-card-title">
+          <span>Spray Foam Type 1</span>
+          <button type="button" class="remove-row-btn" onclick="removeSprayFoamRow(this)" style="visibility:hidden">Remove</button>
+        </div>
+        <div class="field"><label>Product Name / Type of Spray Foam</label><input type="text" class="sf_product"></div>
         <div class="row2">
-          <div class="field"><label>Batch No. A Side</label><input type="text" id="sf_batch_a" class="sf_batch_a"></div>
-          <div class="field"><label>Batch No. B Side</label><input type="text" id="sf_batch_b" class="sf_batch_b"></div>
+          <div class="field"><label>Batch No. A Side</label><input type="text" class="sf_batch_a"></div>
+          <div class="field"><label>Batch No. B Side</label><input type="text" class="sf_batch_b"></div>
         </div>
         <div class="row2">
-          <div class="field"><label>Quantity – Walls (strokes)</label><input type="number" id="sf_walls" class="sf_walls"></div>
-          <div class="field"><label>Quantity – Roof (strokes)</label><input type="number" id="sf_roof" class="sf_roof"></div>
+          <div class="field"><label>Quantity – Walls (strokes)</label><input type="number" class="sf_walls"></div>
+          <div class="field"><label>Quantity – Roof (strokes)</label><input type="number" class="sf_roof"></div>
         </div>
         <div class="field"><label>Waste Foam Collected</label>
           <div style="display:flex;gap:1.5rem;padding:4px 0">
-            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="sf_waste_1" id="sf_waste_yes" class="sf_waste_yes" value="Yes" style="width:auto"> Yes</label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="sf_waste_1" id="sf_waste_no" class="sf_waste_no" value="No" style="width:auto"> No</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
+              <input type="radio" name="sf_waste_1" class="sf_waste_yes" value="Yes" style="width:auto"> Yes
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
+              <input type="radio" name="sf_waste_1" class="sf_waste_no" value="No" style="width:auto"> No
+            </label>
           </div>
         </div>
         <div class="subsection-label">Data Trac</div>
-        <div class="field"><label>Was there a change over?</label>
+        <div class="field">
+          <label>Was there a change over?</label>
           <div style="display:flex;gap:1.5rem;padding:4px 0">
-            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="changeover_1" id="changeover_yes" class="changeover_yes" value="Yes" style="width:auto"> Yes</label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer"><input type="radio" name="changeover_1" id="changeover_no" class="changeover_no" value="No" style="width:auto"> No</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
+              <input type="radio" name="changeover_1" class="changeover_yes" value="Yes" style="width:auto"> Yes
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer">
+              <input type="radio" name="changeover_1" class="changeover_no" value="No" style="width:auto"> No
+            </label>
           </div>
         </div>
-        <div class="field"><label>Data Trac Reading</label><input type="text" id="dt_reading" class="dt_reading"></div>
+        <div class="field"><label>Data Trac Reading</label><input type="text" class="dt_reading"></div>
       </div>
     </div>
     <button type="button" class="add-btn" onclick="addSprayFoamRow()">+ Add Another Type of Spray Foam</button>
@@ -178,6 +190,7 @@ if('serviceWorker' in navigator){
     </div>
   </div>
 </div>
+
 <div class="section">
   <div class="section-header" onclick="toggle(this)">
     <h2>Air Tightness</h2>
@@ -679,14 +692,21 @@ async function generatePDF(){
   }
 
   function fieldRow2(l1,v1,l2,v2,shade){
-    check(22);const hw=CW/2;
-    doc.setFillColor(...(shade?STRIPE:WHITE));doc.rect(M,y,CW,22,'F');
-    doc.setDrawColor(...BORDER);doc.setLineWidth(0.3);doc.line(M,y+22,M+CW,y+22);doc.line(M+hw,y,M+hw,y+22);
+    const hw=CW/2;
+    const labelW=hw*0.52;
+    const valueW=hw-labelW-14;
+    doc.setFont('helvetica','bold');doc.setFontSize(9);
+    const leftLines=doc.splitTextToSize(v1||'—',valueW);
+    const rightLines=doc.splitTextToSize(v2||'—',valueW);
+    const rowH=Math.max(22,(Math.max(leftLines.length,rightLines.length)*11)+10);
+    check(rowH);
+    doc.setFillColor(...(shade?STRIPE:WHITE));doc.rect(M,y,CW,rowH,'F');
+    doc.setDrawColor(...BORDER);doc.setLineWidth(0.3);doc.line(M,y+rowH,M+CW,y+rowH);doc.line(M+hw,y,M+hw,y+rowH);
     doc.setTextColor(...MID);doc.setFontSize(8.5);doc.setFont('helvetica','normal');
     doc.text(l1,M+8,y+14);doc.text(l2,M+hw+8,y+14);
     doc.setTextColor(...DARK);doc.setFontSize(9);doc.setFont('helvetica','bold');
-    doc.text(v1||'—',M+hw*0.55,y+14);doc.text(v2||'—',M+hw+hw*0.55,y+14);
-    y+=22;
+    doc.text(leftLines,M+labelW,y+14);doc.text(rightLines,M+hw+labelW,y+14);
+    y+=rowH;
   }
 
   function tableSection(headers,rows){
