@@ -1,7 +1,7 @@
 
 Copy
 
-const CACHE = 'ecospec-v2';
+const CACHE = 'ecospec-v3';
 const ASSETS = [
   '/Ecoworksheets/',
   '/Ecoworksheets/index.html',
